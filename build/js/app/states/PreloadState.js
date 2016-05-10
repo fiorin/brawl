@@ -9,7 +9,9 @@ define([
     
     PreloadState.prototype = {
         preload: function() {
-            this.game.load.atlasJSONHash('player', 'assets/sprite/sprite.png', 'assets/sprite/sprite.json');
+            this.game.load.atlasJSONHash('player', 'assets/sprites/sprite.png', 'assets/sprites/sprite.json');
+            this.game.load.tilemap('level','assets/levels/map.json',null,Phaser.Tilemap.TILED_JSON);
+            this.game.load.image('tiles','assets/tiles/tiles.png');
         },
         create: function() {
             this.game.state.start('Game');
