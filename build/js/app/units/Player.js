@@ -52,7 +52,7 @@ define([
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
                 this.sprite.body.bounce.set(0.05); 
-                this.sprite.body.setSize(this.sprite.body.width * .4, this.sprite.body.height, 0, 0);
+                this.sprite.body.setSize(this.sprite.body.width * .8, this.sprite.body.height, 0, 0);
                 //this.sprite.body.velocity.y = this.game.state.level.gravity;
                 // =====
             this.still();
