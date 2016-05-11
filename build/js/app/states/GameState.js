@@ -32,7 +32,7 @@ define([
             this.level.layer = this.level.tilemap.createLayer('layer1');
             //this.level.layer.debug = true;
             this.level.layer.resizeWorld();
-            this.game.physics.arcade.gravity.y = 250;
+            this.game.physics.arcade.gravity.y = 400;
             // =====
             
             // =====

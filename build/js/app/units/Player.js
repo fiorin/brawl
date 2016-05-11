@@ -51,7 +51,8 @@ define([
                 this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
-                this.sprite.body.bounce.set(0.05);    
+                this.sprite.body.bounce.set(0.05); 
+                this.sprite.body.setSize(this.sprite.body.width * .4, this.sprite.body.height, 0, 0);
                 //this.sprite.body.velocity.y = this.game.state.level.gravity;
                 // =====
             this.still();
@@ -91,7 +92,7 @@ define([
             }
             if(this.sprite.body.blocked.down && (this.gamepad.isDown(Phaser.Gamepad.XBOX360_A))){
                     this.jump();
-                    this.sprite.body.velocity.y = -250; 
+                    this.sprite.body.velocity.y = -300; 
             }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1){
 
             }
