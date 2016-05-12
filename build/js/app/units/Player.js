@@ -12,7 +12,7 @@ define([
         this.attr = {
             life: 100,
             speed: {
-                _default: 150,
+                _default: 250,
                 floor: null,
                 air: null
             }
@@ -34,10 +34,12 @@ define([
                 this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/', 1, 4,'',1),8,true,false);
                 this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/', 1, 2,'',1),2,true,false);
                 this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('fall/', 1, 2,'',1),2,true,false);
-                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('shoot/', 1, 4,'',1),12,false,false);
-                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('jump_shoot/', 1, 2,'',1),4,false,false);
+                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('shoot/', 1, 2,'',1),4,false,false);
+                //this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('jump_shoot/', 1, 2,'',1),4,false,false);
+                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('shoot/', 1, 2,'',1),4,false,false);
                 this.sprite.animations.add('block',Phaser.Animation.generateFrameNames('block/', 1, 1,'',1),4,false,false);
-                this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('jump_block/', 1, 2,'',1),2,true,false);
+                //this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('jump_block/', 1, 2,'',1),2,true,false);
+                this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('block/', 1, 2,'',1),4,true,false);
                 // =====
 
                 // =====
@@ -52,7 +54,7 @@ define([
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
                 this.sprite.body.bounce.set(0.05); 
-                this.sprite.body.setSize(this.sprite.body.width * .8, this.sprite.body.height, 0, 0);
+                this.sprite.body.setSize(this.sprite.body.width * .8, this.sprite.body.height * .94, 0, this.sprite.body.height * -.03);
                 //this.sprite.body.velocity.y = this.game.state.level.gravity;
                 // =====
             this.still();
@@ -92,7 +94,7 @@ define([
             }
             if(this.sprite.body.blocked.down && (this.gamepad.isDown(Phaser.Gamepad.XBOX360_A))){
                     this.jump();
-                    this.sprite.body.velocity.y = -300; 
+                    this.sprite.body.velocity.y = -600; 
             }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1){
 
             }
@@ -149,6 +151,7 @@ define([
         shoot: function(){
             if(this.sprite.body.blocked.down){
                 this.sprite.animations.play('shoot',false);
+                this.sprite.body.velocity.x = (this.sprite.scale.x > 0) ? 10 : -10;
             }else{
                 console.log(this.sprite.scale.x);
                 this.sprite.animations.play('jump_shoot',false);

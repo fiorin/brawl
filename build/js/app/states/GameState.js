@@ -23,6 +23,7 @@ define([
         create: function() {
             console.log(this.game);
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
+            this.game.add.sprite(0,10, 'ship');
             // =====
             // BACKGROUND
             this.game.stage.backgroundColor = "#fff";
@@ -32,7 +33,7 @@ define([
             this.level.layer = this.level.tilemap.createLayer('layer1');
             //this.level.layer.debug = true;
             this.level.layer.resizeWorld();
-            this.game.physics.arcade.gravity.y = 400;
+            this.game.physics.arcade.gravity.y = 800;
             // =====
             
             // =====
