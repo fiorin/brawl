@@ -6,13 +6,21 @@ define([
     'use strict';
     var multSpeedFloor = 1,
         multSpeedAir   = 1
-    function Player(game){
-        console.log(game);
+    function Player(game,args){
+        this._default = {
+            speed: 250,
+            life: 100,
+            sprite: 'player',
+            position: {
+                x: args.position.x,
+                y: args.position.y
+            }
+        };
+        this.playerNumber = args.playerNumber;
         this.game = game;
         this.attr = {
-            life: 100,
+            life: null,
             speed: {
-                _default: 250,
                 floor: null,
                 air: null
             }
@@ -25,7 +33,7 @@ define([
         start: function() {
             // =====
             // SPRITE
-            this.sprite = this.game.add.sprite(500, 300, 'player');
+            this.sprite = this.game.add.sprite(this._default.position.x, this._default.position.x, this._default.sprite);
             this.sprite.scale.setTo(1,1);
             this.sprite.anchor.setTo(0.5, 1);
                 // =====
@@ -44,8 +52,8 @@ define([
 
                 // =====
                 // ATTR DEFAULTS
-                this.attr.speed.floor = this.attr.speed._default * multSpeedFloor;
-                this.attr.speed.air = this.attr.speed._default * multSpeedAir;
+                this.attr.speed.floor = this._default.speed * multSpeedFloor;
+                this.attr.speed.air = this._default.speed * multSpeedAir;
                 // =====
 
                 // =====
@@ -55,14 +63,18 @@ define([
                 this.sprite.body.collideWorldBounds = true;
                 this.sprite.body.bounce.set(0.05); 
                 this.sprite.body.setSize(this.sprite.body.width * .8, this.sprite.body.height * .94, 0, this.sprite.body.height * -.03);
-                //this.sprite.body.velocity.y = this.game.state.level.gravity;
+                this.sprite.body.velocity.y = this.game.state.callbackContext.level.gravity;
                 // =====
             this.still();
             // =====
 
             // =====
             // GAMEPAD
-            this.gamepad = this.game.input.gamepad.pad1;
+            if(this.playerNumber == 1){
+                this.gamepad = this.game.input.gamepad.pad1;
+            }else if(this.playerNumber == 2){
+                this.gamepad = this.game.input.gamepad.pad2;
+            }
             // =====
         },
         // =====

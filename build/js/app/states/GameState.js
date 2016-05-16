@@ -8,6 +8,7 @@ define([
     'use strict';
 
     function GameState() {
+        this.totalPlayers = 2;
         this.players = [];
         this.level = {
             tilemap: null,
@@ -23,14 +24,16 @@ define([
         create: function() {
             console.log(this.game);
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.game.add.sprite(0,10, 'ship');
+            this.game.add.sprite(0,0, 'ship');
             // =====
             // BACKGROUND
             this.game.stage.backgroundColor = "#fff";
             this.level.tilemap = this.game.add.tilemap('level');
-            this.level.tilemap.addTilesetImage('tiles','tiles');
-            this.level.tilemap.setCollisionBetween(1,8);
+            this.level.tilemap.addTilesetImage('tiles32','tiles');
+            //this.level.tilemap.setCollisionBetween(1,4);
+            this.level.tilemap.setCollision(1);
             this.level.layer = this.level.tilemap.createLayer('layer1');
+            //this.level.layer2 = this.level.tilemap.createLayer('layer2');
             //this.level.layer.debug = true;
             this.level.layer.resizeWorld();
             this.game.physics.arcade.gravity.y = 800;
@@ -38,10 +41,19 @@ define([
             
             // =====
             // INSTANCE PLAYERS
-            this.totalPlayers = 1;
-            this.players[1] = new Player(this.game);
-            this.players[1].start();
-            console.log(this.players[1]);
+            for(var countPlayer = 1; countPlayer <= this.totalPlayers;countPlayer++){
+                //console.log('here');
+                var args = {
+                    playerNumber : countPlayer,
+                    position: {
+                        x: 200 * countPlayer,
+                        y: 100
+                    }
+                };
+                this.players[countPlayer] = new Player(this.game,args);
+                this.players[countPlayer].start();
+            }
+            //console.log(this.players);
             // =====
 
             // =====
@@ -50,8 +62,12 @@ define([
             // =====
         },
         update: function(){
-            this.game.physics.arcade.collide(this.players[1].sprite, this.level.layer);
-            this.players[1].checkGamepad();
+                //this.game.physics.arcade.collide(this.players[2].sprite, this.level.layer);
+                //this.game.physics.arcade.collide(this.players[1].sprite, this.level.layer);
+            for(var countPlayer = 1; countPlayer <= this.totalPlayers;countPlayer++){
+                this.game.physics.arcade.collide(this.players[countPlayer].sprite, this.level.layer);
+                this.players[countPlayer].checkGamepad();
+            }
         }
     };
     
