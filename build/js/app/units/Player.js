@@ -1,7 +1,7 @@
 define([
-
+    'app/units/gun'
 ], function (
-
+    Gun
 ) { 
     'use strict';
     var multSpeedFloor = 1,
@@ -18,12 +18,13 @@ define([
         };
         this.playerNumber = args.playerNumber;
         this.game = game;
-        this.attr = {
+        this.current = {
             life: null,
             speed: {
                 floor: null,
                 air: null
-            }
+            },
+            gun: null
         };
         this.sprite;
         this.gamepad;
@@ -51,21 +52,24 @@ define([
                 // =====
 
                 // =====
-                // ATTR DEFAULTS
-                this.attr.speed.floor = this._default.speed * multSpeedFloor;
-                this.attr.speed.air = this._default.speed * multSpeedAir;
-                // =====
-
-                // =====
                 // PHYSICS
                 this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
                 this.sprite.body.bounce.set(0.05); 
-                this.sprite.body.setSize(this.sprite.body.width * .8, this.sprite.body.height * .94, 0, this.sprite.body.height * -.03);
+                this.sprite.body.setSize(this.sprite.body.width * .4, this.sprite.body.height * .94, 0, this.sprite.body.height * -.03);
                 this.sprite.body.velocity.y = this.game.state.callbackContext.level.gravity;
                 // =====
+
             this.still();
+            // =====
+
+            // =====
+            // ATTR DEFAULTS
+            this.current.speed.floor = this._default.speed * multSpeedFloor;
+            this.current.speed.air = this._default.speed * multSpeedAir;
+            this.current.gun = new Gun(this.game);
+            this.current.gun.start();
             // =====
 
             // =====
@@ -81,24 +85,24 @@ define([
         // STATUS CHECK
         checkGamepad: function(){
             //console.log(this.sprite.body.blocked);
-            //console.log(this.attr.speed.floor);
+            //console.log(this.current.speed.floor);
             if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
                 this.sprite.scale.x = 1;
                 if(this.sprite.body.blocked.down){
                     this.run();
-                    this.sprite.body.velocity.x = -this.attr.speed.floor;
+                    this.sprite.body.velocity.x = -this.current.speed.floor;
                 }else{
                     this.jump();
-                    this.sprite.body.velocity.x = -this.attr.speed.air;
+                    this.sprite.body.velocity.x = -this.current.speed.air;
                 }
             }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){
                 this.sprite.scale.x = -1;
                 if(this.sprite.body.blocked.down){
                     this.run();
-                    this.sprite.body.velocity.x = this.attr.speed.floor;
+                    this.sprite.body.velocity.x = this.current.speed.floor;
                 }else{
                     this.jump();
-                    this.sprite.body.velocity.x = this.attr.speed.air;
+                    this.sprite.body.velocity.x = this.current.speed.air;
                 }
             }else{
                 this.sprite.body.velocity.x = 0;
@@ -142,7 +146,7 @@ define([
         // =====
 
         // =====
-        // ANIMATIONS
+        // ACTIONS
         still: function(){
             this.sprite.animations.play('still');
         },
@@ -161,19 +165,23 @@ define([
             }
         },
         shoot: function(){
-            if(this.sprite.body.blocked.down){
-                this.sprite.animations.play('shoot',false);
-                this.sprite.body.velocity.x = (this.sprite.scale.x > 0) ? 10 : -10;
-            }else{
-                console.log(this.sprite.scale.x);
-                this.sprite.animations.play('jump_shoot',false);
-                this.sprite.body.velocity.x = (this.sprite.scale.x > 0) ? 100 : -100;
-                if(this.sprite.body.velocity.y < 0)
-                    this.sprite.body.velocity.y = 0
+            if(this.current.gun.getReady() < this.game.time.time){
+                console.log('BANG');
+                this.current.gun.shoot();
+                if(this.sprite.body.blocked.down){
+                    this.sprite.animations.play('shoot',false);
+                    this.sprite.body.velocity.x = (this.sprite.scale.x > 0) ? 10 : -10;
+                }else{
+                    console.log(this.sprite.scale.x);
+                    this.sprite.animations.play('jump_shoot',false);
+                    this.sprite.body.velocity.x = (this.sprite.scale.x > 0) ? 100 : -100;
+                    if(this.sprite.body.velocity.y < 0)
+                        this.sprite.body.velocity.y = 0
+                }
+                this.sprite.animations.currentAnim.onComplete.add(function(){
+                    this.checkAnimation();
+                }.bind(this));
             }
-            this.sprite.animations.currentAnim.onComplete.add(function(){
-                this.checkAnimation();
-            }.bind(this));
         },
         block: function(){
             if(this.sprite.body.blocked.down){
