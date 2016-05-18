@@ -5,36 +5,45 @@ define([
 ) { 
     'use strict';
     var multSpeedFloor = 1,
-        multSpeedAir   = 1
+        multSpeedAir   = .8,
+        left           = -1,
+        right          = 1,
+        zero           = 0;
     function Player(game,args){
+        this.game = game;
+        this.playerNumber = args.playerNumber;
         this._default = {
             speed: 250,
             life: 100,
-            sprite: 'player',
-            position: {
-                x: args.position.x,
-                y: args.position.y
-            }
+            jump: 600,
+            sprite: 'player'
         };
-        this.playerNumber = args.playerNumber;
-        this.game = game;
         this.current = {
             life: null,
             speed: {
-                floor: null,
-                air: null
+                floor: this._default.speed * multSpeedFloor,
+                air: this._default.speed * multSpeedAir
             },
-            gun: null
+            weapon: {
+                gun: (new Gun(this.game)).start(),
+                sword: null
+            },
+            can: {
+                die: true,
+                run: true,
+                shoot: true,
+                block: true,
+                jump: true
+            }
         };
-        this.sprite;
-        this.gamepad;
+        this.sprite = this.game.add.sprite(args.position.x, args.position.y, this._default.sprite);
+        this.gamepad = this.game.input.gamepad['pad'+this.playerNumber];
     }
     
     Player.prototype = {
         start: function() {
             // =====
             // SPRITE
-            this.sprite = this.game.add.sprite(this._default.position.x, this._default.position.x, this._default.sprite);
             this.sprite.scale.setTo(1,1);
             this.sprite.anchor.setTo(0.5, 1);
                 // =====
@@ -63,107 +72,125 @@ define([
 
             this.still();
             // =====
-
-            // =====
-            // ATTR DEFAULTS
-            this.current.speed.floor = this._default.speed * multSpeedFloor;
-            this.current.speed.air = this._default.speed * multSpeedAir;
-            this.current.gun = new Gun(this.game);
-            this.current.gun.start();
-            // =====
-
-            // =====
-            // GAMEPAD
-            if(this.playerNumber == 1){
-                this.gamepad = this.game.input.gamepad.pad1;
-            }else if(this.playerNumber == 2){
-                this.gamepad = this.game.input.gamepad.pad2;
-            }
-            // =====
         },
         // =====
-        // STATUS CHECK
+        // CHECK GAMEPAD INPUT
         checkGamepad: function(){
             //console.log(this.sprite.body.blocked);
             //console.log(this.current.speed.floor);
-            if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
-                this.sprite.scale.x = 1;
-                if(this.sprite.body.blocked.down){
-                    this.run();
-                    this.sprite.body.velocity.x = -this.current.speed.floor;
-                }else{
-                    this.jump();
-                    this.sprite.body.velocity.x = -this.current.speed.air;
+            if(this.sprite.body.blocked.down){
+            // =====
+            // IF FLOOR
+                if(this.current.can.run){
+                // =====
+                // IF CAN RUN
+                    if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
+                    // =====
+                    // RUN LEFT
+                        this.run(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
+                    // =====
+                    }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){
+                    // =====
+                    // RUN RIGHT
+                        this.run(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
+                    // =====
+                    }else{
+                        this.still();
+                    }
+                // =====
                 }
-            }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){
-                this.sprite.scale.x = -1;
-                if(this.sprite.body.blocked.down){
-                    this.run();
-                    this.sprite.body.velocity.x = this.current.speed.floor;
-                }else{
-                    this.jump();
-                    this.sprite.body.velocity.x = this.current.speed.air;
+                if(this.current.can.jump){
+                // =====
+                // IF CAN JUMP
+                    if(this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
+                    // =====
+                    // JUMP
+                        if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
+                            this.jump(left);
+                        }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){  
+                            this.jump(right);
+                        }else{
+                            this.jump(zero);
+                        }
+                    // =====
+                    }
+                // =====
                 }
+            // =====
             }else{
-                this.sprite.body.velocity.x = 0;
-                this.checkAnimation();
-            }
-            if(this.sprite.body.blocked.down && (this.gamepad.isDown(Phaser.Gamepad.XBOX360_A))){
-                    this.jump();
-                    this.sprite.body.velocity.y = -600; 
-            }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y) > 0.1){
+            // =====
+            // IF AIR
+                if(this.current.can.run){
+                // =====
+                // IF CAN RUN
+                    if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
+                        this.runJump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
+                    }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){
+                        this.runJump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
+                    }  
+                }
+                // =====
 
+
+                if(this.sprite.body.deltaY() > 0){
+                // =====
+                // IF FALLING
+                    this.fall();
+                // =====
+                }
+
+                if(this.current.can.jump){
+                // =====
+                // IF CAN DOUBLE JUMP
+
+                // =====
+                }
+            // =====
             }
+
+            /*
             if(this.gamepad.isDown(Phaser.Gamepad.XBOX360_RIGHT_TRIGGER)){
                     this.shoot();
             }
             if(this.gamepad.isDown(Phaser.Gamepad.XBOX360_RIGHT_BUMPER)){
                     this.block();
             }
+            */
             //this.gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_UP)
             //this.gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN)
         },
-        checkAnimation: function(){
+        // =====
+
+        /*checkAnimation: function(){
             if(this.sprite.animations.currentAnim.loop || (!this.sprite.animations.currentAnim.loop && this.sprite.animations.currentAnim.isFinished)){
-                if(this.sprite.body.blocked.down){
-                    this.still();
-                }else{
-                    if(this.sprite.body.deltaY() < 0){
-                        this.sprite.animations.play('jump');
-                    }else{
-                        this.sprite.animations.play('fall');
-                    }
-                }
+                
             }
-        },
-        // =====
-
-        // =====
-        // MOVE
-        checkMove: function(){
-
-        },
-        // =====
+        },*/
 
         // =====
         // ACTIONS
         still: function(){
             this.sprite.animations.play('still');
+            this.sprite.body.velocity.x = 0;
         },
-        run: function(){
+        run: function(multX){
+            this.sprite.scale.x = multX < 0 ? 1 : -1;
+            this.sprite.body.velocity.x = this.current.speed.floor * multX;
             this.sprite.animations.play('run');
         },
-        runStop: function(){
-            this.still();
+        runJump: function(multX){
+            this.sprite.scale.x = multX < 0 ? 1 : -1;
+            this.sprite.body.velocity.x = this.current.speed.floor * multX;
         },
-        jump: function(){
-            //console.log(this.sprite.body.deltaY());
-            if(this.sprite.body.deltaY() < 0){
-                this.sprite.animations.play('jump');
-            }else{
-                this.sprite.animations.play('fall');
-            }
+        jump: function(multX){
+            this.sprite.body.velocity.y = -600; 
+            this.sprite.animations.play('jump');
+            this.sprite.body.velocity.x = this.current.speed.air * multX;
         },
+        fall: function(){
+            this.sprite.animations.play('fall');
+        },
+        /*
         shoot: function(){
             if(this.current.gun.getReady() < this.game.time.time){
                 console.log('BANG');
@@ -192,7 +219,7 @@ define([
             this.sprite.animations.currentAnim.onComplete.add(function(){
                 this.checkAnimation();
             }.bind(this));
-        }
+        }*/
         // =====
     };
     

@@ -8,7 +8,7 @@ define([
     'use strict';
 
     function GameState() {
-        this.totalPlayers = 2;
+        this.totalPlayers = 1;
         this.players = [];
         this.level = {
             tilemap: null,

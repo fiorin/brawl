@@ -34,6 +34,7 @@ define([
             this.bullets.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', this.destroy);
             this.bullets.callAll('anchor.setTo', 'anchor', .5, .5);
             this.bullets.setAll('checkWorldBounds', true);
+            return this;
         },
         // =====
         // STATUS
