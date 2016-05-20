@@ -6,6 +6,7 @@ define([
     'use strict';
     var multSpeedFloor = 1,
         multSpeedAir   = .8,
+        multSpeedWall  = 1.5,
         left           = -1,
         right          = 1,
         zero           = 0;
@@ -15,14 +16,22 @@ define([
         this._default = {
             speed: 250,
             life: 100,
-            jump: 600,
+            jump: {
+                y: 600,
+                times: 2
+            },
             sprite: 'player'
         };
         this.current = {
             life: null,
             speed: {
                 floor: this._default.speed * multSpeedFloor,
-                air: this._default.speed * multSpeedAir
+                air: this._default.speed * multSpeedAir,
+                wall: this._default.speed * multSpeedWall
+            },
+            jump: {
+                floor: this._default.jump.y * -multSpeedFloor,
+                air: this._default.jump.y * -multSpeedAir
             },
             weapon: {
                 gun: (new Gun(this.game)).start(),
@@ -66,7 +75,7 @@ define([
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
                 this.sprite.body.bounce.set(0.05); 
-                this.sprite.body.setSize(this.sprite.body.width * .4, this.sprite.body.height * .94, 0, this.sprite.body.height * -.03);
+                this.sprite.body.setSize(this.sprite.body.width * .4, this.sprite.body.height, 0, 0);
                 this.sprite.body.velocity.y = this.game.state.callbackContext.level.gravity;
                 // =====
 
@@ -77,10 +86,10 @@ define([
         // CHECK GAMEPAD INPUT
         checkGamepad: function(){
             //console.log(this.sprite.body.blocked);
-            //console.log(this.current.speed.floor);
             if(this.sprite.body.blocked.down){
             // =====
             // IF FLOOR
+                this.current.can.jump = true;
                 if(this.current.can.run){
                 // =====
                 // IF CAN RUN
@@ -105,10 +114,11 @@ define([
                     if(this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
                     // =====
                     // JUMP
+                        this.current.can.jump = false;
                         if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
-                            this.jump(left);
+                            this.jump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
                         }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){  
-                            this.jump(right);
+                            this.jump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
                         }else{
                             this.jump(zero);
                         }
@@ -120,34 +130,43 @@ define([
             }else{
             // =====
             // IF AIR
-                if(this.current.can.run){
+                if(!(this.sprite.body.deltaX() > 0)
+                && (this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < 0)){
                 // =====
-                // IF CAN RUN
-                    if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
+                // GO TO LEFT
+                    if(this.current.can.jump && this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
+                        this.current.can.jump = false;
+                        this.jump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
+                    }else{
                         this.runJump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
-                    }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){
+                    }
+                // =====
+                }else if(!(this.sprite.body.deltaX() < 0)
+                && (this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0)){
+                // =====
+                // GO TO RIGHT
+                    if(this.current.can.jump && this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
+                        this.current.can.jump = false;
+                        this.jump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
+                    }else{
                         this.runJump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
-                    }  
-                }
+                    }
                 // =====
-
-
-                if(this.sprite.body.deltaY() > 0){
+                }else{
                 // =====
-                // IF FALLING
-                    this.fall();
-                // =====
-                }
-
-                if(this.current.can.jump){
-                // =====
-                // IF CAN DOUBLE JUMP
-
+                // CENTER
+                    if(this.current.can.jump && this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
+                        this.current.can.jump = false;
+                        this.jump(zero);
+                    }else{
+                        if(this.sprite.body.deltaY() > 0){
+                            if(this.sprite.animations.currentAnim.name != 'fall') this.fall();
+                        }
+                    }
                 // =====
                 }
             // =====
             }
-
             /*
             if(this.gamepad.isDown(Phaser.Gamepad.XBOX360_RIGHT_TRIGGER)){
                     this.shoot();
@@ -160,12 +179,6 @@ define([
             //this.gamepad.isDown(Phaser.Gamepad.XBOX360_DPAD_DOWN)
         },
         // =====
-
-        /*checkAnimation: function(){
-            if(this.sprite.animations.currentAnim.loop || (!this.sprite.animations.currentAnim.loop && this.sprite.animations.currentAnim.isFinished)){
-                
-            }
-        },*/
 
         // =====
         // ACTIONS
@@ -183,7 +196,7 @@ define([
             this.sprite.body.velocity.x = this.current.speed.floor * multX;
         },
         jump: function(multX){
-            this.sprite.body.velocity.y = -600; 
+            this.sprite.body.velocity.y = this.current.jump.floor; 
             this.sprite.animations.play('jump');
             this.sprite.body.velocity.x = this.current.speed.air * multX;
         },

@@ -12,6 +12,12 @@ define([
 
         },
         create: function() {
+            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            this.game.scale.setShowAll();
+            window.addEventListener('resize', function () {
+                this.game.scale.refresh();
+            });
+            this.game.scale.refresh();
             this.game.state.start('Preload');
         }
     };

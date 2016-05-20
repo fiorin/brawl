@@ -36,7 +36,7 @@ define([
             //this.level.layer2 = this.level.tilemap.createLayer('layer2');
             //this.level.layer.debug = true;
             this.level.layer.resizeWorld();
-            this.game.physics.arcade.gravity.y = 1000;
+            this.game.physics.arcade.gravity.y = 800;
             // =====
             
             // =====
@@ -60,6 +60,8 @@ define([
             // GAMEPAD SUPPORT
             this.game.input.gamepad.start();
             // =====
+            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            this.game.scale.setShowAll();
         },
         update: function(){
                 //this.game.physics.arcade.collide(this.players[2].sprite, this.level.layer);
