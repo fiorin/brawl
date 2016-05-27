@@ -8,7 +8,7 @@ define([
     'use strict';
 
     function GameState() {
-        this.totalPlayers = 1;
+        this.totalPlayers = 2;
         this.players = [];
         this.level = {
             tilemap: null,
@@ -62,8 +62,10 @@ define([
             // =====
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             this.game.scale.setShowAll();
+            this.game.time.advancedTiming = true;
         },
         update: function(){
+            this.game.debug.text(this.game.time.fps, 2, 14, "#00ff00");
                 //this.game.physics.arcade.collide(this.players[2].sprite, this.level.layer);
                 //this.game.physics.arcade.collide(this.players[1].sprite, this.level.layer);
             for(var countPlayer = 1; countPlayer <= this.totalPlayers;countPlayer++){

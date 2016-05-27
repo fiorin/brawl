@@ -57,16 +57,24 @@ define([
             this.sprite.anchor.setTo(0.5, 1);
                 // =====
                 // ANIMATIONS
-                this.sprite.animations.add('still',Phaser.Animation.generateFrameNames('still/', 1, 4,'',1),4,false);
-                this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/', 1, 4,'',1),8,true,false);
-                this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/', 1, 2,'',1),2,true,false);
-                this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('fall/', 1, 2,'',1),2,true,false);
-                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('shoot/', 1, 2,'',1),4,false,false);
+                console.log(Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3));
+                this.sprite.animations.add('still',Phaser.Animation.generateFrameNames('still/still__', 0, 9,'',3),6,false);
+                this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                //this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/', 1, 4,'',1),8,true,false);
+                //this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/', 1, 2,'',1),2,true,false);
+                //this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('fall/', 1, 2,'',1),2,true,false);
+                //this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('shoot/', 1, 2,'',1),4,false,false);
                 //this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('jump_shoot/', 1, 2,'',1),4,false,false);
-                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('shoot/', 1, 2,'',1),4,false,false);
-                this.sprite.animations.add('block',Phaser.Animation.generateFrameNames('block/', 1, 1,'',1),4,false,false);
+                //this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('shoot/', 1, 2,'',1),4,false,false);
+                //this.sprite.animations.add('block',Phaser.Animation.generateFrameNames('block/', 1, 1,'',1),4,false,false);
                 //this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('jump_block/', 1, 2,'',1),2,true,false);
-                this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('block/', 1, 2,'',1),4,true,false);
+                //this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('block/', 1, 2,'',1),4,true,false);
                 // =====
 
                 // =====
@@ -75,7 +83,7 @@ define([
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
                 this.sprite.body.bounce.set(0.05); 
-                this.sprite.body.setSize(this.sprite.body.width * .4, this.sprite.body.height, 0, 0);
+                this.sprite.body.setSize(this.sprite.body.width, this.sprite.body.height * 0.9, 0, this.sprite.body.height * -0.05);
                 this.sprite.body.velocity.y = this.game.state.callbackContext.level.gravity;
                 // =====
 
