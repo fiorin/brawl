@@ -25,6 +25,7 @@ define([
             console.log(this.game);
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.add.sprite(0,0, 'ship');
+            this.game.add.sprite(20,20, 'brawl');
             // =====
             // BACKGROUND
             this.game.stage.backgroundColor = "#fff";

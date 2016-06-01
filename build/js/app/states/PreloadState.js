@@ -14,6 +14,7 @@ define([
             this.game.load.tilemap('level','assets/levels/map.json',null,Phaser.Tilemap.TILED_JSON);
             this.game.load.image('tiles','assets/levels/blocks.jpg');
             this.game.load.image('ship','assets/levels/ship.jpg');
+            this.game.load.image('brawl','assets/brawl.png');
         },
         create: function() {
             this.game.state.start('Game');
