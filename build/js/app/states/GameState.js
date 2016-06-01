@@ -29,11 +29,10 @@ define([
             // BACKGROUND
             this.game.stage.backgroundColor = "#fff";
             this.level.tilemap = this.game.add.tilemap('level');
-            this.level.tilemap.addTilesetImage('tiles32','tiles');
-            this.level.tilemap.setCollisionBetween(1,45);
+            this.level.tilemap.addTilesetImage('blocks','tiles');
+            this.level.tilemap.setCollisionBetween(1,16);
             //this.level.tilemap.setCollision(1);
             this.level.layer = this.level.tilemap.createLayer('layer');
-            //this.level.layer2 = this.level.tilemap.createLayer('layer2');
             //this.level.layer.debug = true;
             this.level.layer.resizeWorld();
             this.game.physics.arcade.gravity.y = 800;
@@ -46,7 +45,7 @@ define([
                 var args = {
                     playerNumber : countPlayer,
                     position: {
-                        x: 500 * countPlayer,
+                        x: 350 * countPlayer,
                         y: 100
                     }
                 };
