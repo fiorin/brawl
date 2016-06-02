@@ -16,7 +16,7 @@ define([
             this.game.scale.setShowAll();
             window.addEventListener('resize', function () {
                 this.game.scale.refresh();
-            });
+            }.bind(this));
             this.game.scale.refresh();
             this.game.state.start('Preload');
         }

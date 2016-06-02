@@ -8,12 +8,12 @@ define([
     'use strict';
 
     function GameState() {
-        this.totalPlayers = 2;
+        this.totalPlayers = 1;
         this.players = [];
         this.level = {
             tilemap: null,
             layer: null,
-            gravity: 150
+            gravity: 128
         };
     }
     
@@ -65,13 +65,16 @@ define([
             this.game.time.advancedTiming = true;
         },
         update: function(){
-            this.game.debug.text(this.game.time.fps, 2, 14, "#00ff00");
                 //this.game.physics.arcade.collide(this.players[2].sprite, this.level.layer);
                 //this.game.physics.arcade.collide(this.players[1].sprite, this.level.layer);
             for(var countPlayer = 1; countPlayer <= this.totalPlayers;countPlayer++){
                 this.game.physics.arcade.collide(this.players[countPlayer].sprite, this.level.layer);
                 this.players[countPlayer].checkGamepad();
             }
+        },
+        render: function(){
+            this.game.debug.text(this.game.time.fps, 2, 14, "#00ff00");
+            this.game.debug.body(this.players[1].sprite);
         }
     };
     

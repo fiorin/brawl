@@ -14,6 +14,7 @@ define([
         this.game = game;
         this.playerNumber = args.playerNumber;
         this._default = {
+            weight: 80,
             speed: 250,
             life: 100,
             jump: {
@@ -34,7 +35,7 @@ define([
                 air: this._default.jump.y * -multSpeedAir
             },
             weapon: {
-                gun: (new Gun(this.game)).start(),
+                gun: (new Gun(this.game,this)).start(),
                 sword: null
             },
             can: {
@@ -82,9 +83,15 @@ define([
                 this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
-                this.sprite.body.bounce.set(0.05); 
-                this.sprite.body.setSize(this.sprite.body.width, this.sprite.body.height * 0.9, 0, this.sprite.body.height * -0.05);
-                this.sprite.body.velocity.y = this.game.state.callbackContext.level.gravity;
+                //this.sprite.body.bounce.set(0.05); 
+                //this.sprite.body.setSize(this.sprite.body.width, this.sprite.body.height, 0, 0);
+                console.log(this.sprite.body);
+                //this.sprite.body.gravity.y = this.game.physics.arcade.gravity.y;
+                // =====
+
+                // =====
+                // WEAPON
+
                 // =====
 
             this.still();
@@ -175,10 +182,10 @@ define([
                 }
             // =====
             }
-            /*
             if(this.gamepad.isDown(Phaser.Gamepad.XBOX360_RIGHT_TRIGGER)){
-                    this.shoot();
+                this.shoot();
             }
+            /*
             if(this.gamepad.isDown(Phaser.Gamepad.XBOX360_RIGHT_BUMPER)){
                     this.block();
             }
@@ -211,12 +218,12 @@ define([
         fall: function(){
             this.sprite.animations.play('fall');
         },
-        /*
         shoot: function(){
-            if(this.current.gun.getReady() < this.game.time.time){
+            if(this.current.weapon.gun.getReady() < this.game.time.time){
                 console.log('BANG');
-                this.current.gun.shoot();
-                if(this.sprite.body.blocked.down){
+                this.current.weapon.gun.shoot();
+                //.getFirstExists(false)
+                /*if(this.sprite.body.blocked.down){
                     this.sprite.animations.play('shoot',false);
                     this.sprite.body.velocity.x = (this.sprite.scale.x > 0) ? 10 : -10;
                 }else{
@@ -228,9 +235,10 @@ define([
                 }
                 this.sprite.animations.currentAnim.onComplete.add(function(){
                     this.checkAnimation();
-                }.bind(this));
+                }.bind(this));*/
             }
         },
+        /*
         block: function(){
             if(this.sprite.body.blocked.down){
                 this.sprite.animations.play('block',false);

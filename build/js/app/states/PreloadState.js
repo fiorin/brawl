@@ -15,6 +15,7 @@ define([
             this.game.load.image('tiles','assets/levels/blocks.jpg');
             this.game.load.image('ship','assets/levels/ship.jpg');
             this.game.load.image('brawl','assets/brawl.png');
+            this.game.load.image('bullet','assets/sprites/bullet.jpg');
         },
         create: function() {
             this.game.state.start('Game');
