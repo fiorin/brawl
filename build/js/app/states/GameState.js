@@ -8,7 +8,7 @@ define([
     'use strict';
 
     function GameState() {
-        this.totalPlayers = 1;
+        this.totalPlayers = 4;
         this.players = [];
         this.level = {
             tilemap: null,
@@ -24,34 +24,61 @@ define([
         create: function() {
             console.log(this.game);
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.game.add.sprite(0,0, 'ship');
-            this.game.add.sprite(20,20, 'brawl');
+            this.game.add.sprite(0,0, 'bg');
+            this.game.add.sprite(600,20, 'brawl');
             // =====
             // BACKGROUND
             this.game.stage.backgroundColor = "#fff";
             this.level.tilemap = this.game.add.tilemap('level');
             this.level.tilemap.addTilesetImage('blocks','tiles');
-            this.level.tilemap.setCollisionBetween(1,16);
+            this.level.tilemap.setCollisionBetween(10,14);
+            this.level.tilemap.setCollisionBetween(17,18);
             //this.level.tilemap.setCollision(1);
             this.level.layer = this.level.tilemap.createLayer('layer');
             //this.level.layer.debug = true;
             this.level.layer.resizeWorld();
-            this.game.physics.arcade.gravity.y = 800;
+            this.game.physics.arcade.gravity.y = 1000;
             // =====
             
             // =====
             // INSTANCE PLAYERS
+            var playersConfig = {
+                p1: {
+                    uiStatus: {x:10,y:10},
+                    character: 'drake',
+                    startPosition: {x:100,y:400}
+                },
+                p2: {
+                    uiStatus: {x:1207,y:10},
+                    character: 'barts',
+                    startPosition: {x:300,y:200}
+                },
+                p3: {
+                    uiStatus: {x:10,y:660},
+                    character: 'drake',
+                    startPosition: {x:500,y:500}
+                },
+                p4: {
+                    uiStatus:{x:1207,y:660},
+                    character: 'drake',
+                    startPosition: {x:900,y:600}
+                }
+            }
             for(var countPlayer = 1; countPlayer <= this.totalPlayers;countPlayer++){
                 //console.log('here');
+                var currentPlayer = playersConfig['p'+countPlayer];
                 var args = {
                     playerNumber : countPlayer,
                     position: {
-                        x: 350 * countPlayer,
-                        y: 100
-                    }
+                        x: currentPlayer.startPosition.x,
+                        y: currentPlayer.startPosition.y
+                    },
+                    character: currentPlayer.character
                 };
+                this.game.add.sprite(currentPlayer.uiStatus.x,currentPlayer.uiStatus.y, 'status');
                 this.players[countPlayer] = new Player(this.game,args);
                 this.players[countPlayer].start();
+                this.game.add.sprite(currentPlayer.uiStatus.x+8,currentPlayer.uiStatus.y+9, this.players[countPlayer]._default.avatar);
             }
             //console.log(this.players);
             // =====
@@ -65,8 +92,6 @@ define([
             this.game.time.advancedTiming = true;
         },
         update: function(){
-                //this.game.physics.arcade.collide(this.players[2].sprite, this.level.layer);
-                //this.game.physics.arcade.collide(this.players[1].sprite, this.level.layer);
             for(var countPlayer = 1; countPlayer <= this.totalPlayers;countPlayer++){
                 this.game.physics.arcade.collide(this.players[countPlayer].sprite, this.level.layer);
                 this.players[countPlayer].checkGamepad();

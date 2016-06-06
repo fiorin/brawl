@@ -7,8 +7,6 @@ define([
     var multSpeedFloor = 1,
         multSpeedAir   = .8,
         multSpeedWall  = 1.5,
-        left           = -1,
-        right          = 1,
         zero           = 0;
     function Player(game,args){
         this.game = game;
@@ -21,9 +19,13 @@ define([
                 y: 600,
                 times: 2
             },
-            sprite: 'player'
+            sprite: args.character,
+            avatar: 'avatar'
         };
         this.current = {
+            position: {
+                face: args.face || 1
+            },
             life: null,
             speed: {
                 floor: this._default.speed * multSpeedFloor,
@@ -83,8 +85,8 @@ define([
                 this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
-                //this.sprite.body.bounce.set(0.05); 
-                //this.sprite.body.setSize(this.sprite.body.width, this.sprite.body.height, 0, 0);
+                this.sprite.body.bounce.set(0.05); 
+                this.sprite.body.setSize(this.sprite.body.width * .7, this.sprite.body.height, 0, 0);
                 console.log(this.sprite.body);
                 //this.sprite.body.gravity.y = this.game.physics.arcade.gravity.y;
                 // =====
@@ -111,11 +113,13 @@ define([
                     if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
                     // =====
                     // RUN LEFT
+                        this.changeFacing(-1);
                         this.run(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
                     // =====
                     }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){
                     // =====
                     // RUN RIGHT
+                        this.changeFacing(1);
                         this.run(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
                     // =====
                     }else{
@@ -131,8 +135,10 @@ define([
                     // JUMP
                         this.current.can.jump = false;
                         if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1){
+                            this.changeFacing(-1);
                             this.jump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
-                        }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){  
+                        }else if(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1){ 
+                            this.changeFacing(1); 
                             this.jump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
                         }else{
                             this.jump(zero);
@@ -149,6 +155,7 @@ define([
                 && (this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < 0)){
                 // =====
                 // GO TO LEFT
+                    this.changeFacing(-1);
                     if(this.current.can.jump && this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
                         this.current.can.jump = false;
                         this.jump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
@@ -160,6 +167,7 @@ define([
                 && (this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0)){
                 // =====
                 // GO TO RIGHT
+                    this.changeFacing(1);
                     if(this.current.can.jump && this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
                         this.current.can.jump = false;
                         this.jump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
@@ -196,46 +204,59 @@ define([
         // =====
 
         // =====
+        // VISUAL FUNCTIONS
+        changeFacing: function(x){
+            this.current.position.face = x >= 0 ? 1 : -1;
+        },
+        changeAnimation: function(name,loop,killOnComplete){
+            if(this.sprite.animations.currentAnim !== name)
+                this.sprite.animations.play(name,loop,killOnComplete);
+        },
+        // =====
+
+        // =====
         // ACTIONS
         still: function(){
-            this.sprite.animations.play('still');
+            this.changeAnimation('still');
             this.sprite.body.velocity.x = 0;
         },
         run: function(multX){
-            this.sprite.scale.x = multX < 0 ? 1 : -1;
+            console.log(this.sprite.body.facing);
+            this.sprite.scale.x = this.current.position.face;
             this.sprite.body.velocity.x = this.current.speed.floor * multX;
-            this.sprite.animations.play('run');
+            this.changeAnimation('run');
         },
         runJump: function(multX){
-            this.sprite.scale.x = multX < 0 ? 1 : -1;
+            this.sprite.scale.x = this.current.position.face;
             this.sprite.body.velocity.x = this.current.speed.floor * multX;
         },
         jump: function(multX){
             this.sprite.body.velocity.y = this.current.jump.floor; 
-            this.sprite.animations.play('jump');
+            this.changeAnimation('jump');
             this.sprite.body.velocity.x = this.current.speed.air * multX;
         },
         fall: function(){
-            this.sprite.animations.play('fall');
+            this.changeAnimation('fall');
         },
         shoot: function(){
             if(this.current.weapon.gun.getReady() < this.game.time.time){
                 console.log('BANG');
                 this.current.weapon.gun.shoot();
-                //.getFirstExists(false)
-                /*if(this.sprite.body.blocked.down){
+                if(this.sprite.body.blocked.down){
                     this.sprite.animations.play('shoot',false);
-                    this.sprite.body.velocity.x = (this.sprite.scale.x > 0) ? 10 : -10;
+                    this.sprite.body.velocity.x = -this.current.weapon.gun.config.recoil * this.current.position.face;
                 }else{
-                    console.log(this.sprite.scale.x);
                     this.sprite.animations.play('jump_shoot',false);
-                    this.sprite.body.velocity.x = (this.sprite.scale.x > 0) ? 100 : -100;
+                    this.sprite.body.velocity.x = -this.current.weapon.gun.config.recoil * this.current.position.face;
                     if(this.sprite.body.velocity.y < 0)
                         this.sprite.body.velocity.y = 0
                 }
                 this.sprite.animations.currentAnim.onComplete.add(function(){
-                    this.checkAnimation();
-                }.bind(this));*/
+                    if(this.sprite.body.blocked.down)
+                        this.still();
+                    else
+                        this.fall();
+                }.bind(this));
             }
         },
         /*

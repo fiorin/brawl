@@ -9,7 +9,7 @@ define([
         this.game = game;
         this.owner = owner;
         this.config = {
-            recoil: 10,
+            recoil: 50,
             reload: 10,
             firerate: 2000,
             ammo: 10
@@ -57,16 +57,10 @@ define([
         // =====
         // ACTIONS
         shoot: function(){
-            console.log('---');
-            console.log('shoot');
-            console.log(this.bullets);
-            console.log(this.config);
-            console.log('---');
             var bullet = this.bullets.getFirstExists(false);
-            console.log(bullet);
-            console.log('/\\');
-            bullet.reset(this.owner.sprite.position.x, this.owner.sprite.position.y - this.owner.sprite.body.height);
-            bullet.body.velocity.x = 1000;
+            bullet.reset(this.owner.sprite.position.x, this.owner.sprite.position.y - (this.owner.sprite.body.height/2));
+            bullet.body.gravity.y = -800;
+            bullet.body.velocity.x = this.owner.current.position.face * 1000;
             this.status.ammo--;
             this.setReady();
         },
