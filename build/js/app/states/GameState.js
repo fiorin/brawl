@@ -8,44 +8,68 @@ define([
     'use strict';
 
     function GameState() {
-        this.totalPlayers = 4;
-        this.players = [];
-        this.level = {
-            tilemap: null,
-            layer: null,
-            gravity: 128
-        };
+            
     }
     
     GameState.prototype = {
         preload: function() {
-
+            this.game.info = {
+                totalPlayers: 4
+            }
+            this.game.config = {
+                players: [],
+                groupColliders: {
+                    players: [],
+                    bullets: []
+                },
+                level: {
+                    tilemap: null,
+                    layer: null,
+                    gravity: 128
+                }
+            };
         },
         create: function() {
-            console.log(this.game);
+            console.log('qhat');
+            console.log(this);
+            // =====
+            // ENGINE
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.game.add.sprite(0,0, 'bg');
-            this.game.add.sprite(600,20, 'brawl');
+            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            this.game.scale.setShowAll();
+            // =====
+
             // =====
             // BACKGROUND
+            this.game.add.sprite(0,0, 'bg');
             this.game.stage.backgroundColor = "#fff";
-            this.level.tilemap = this.game.add.tilemap('level');
-            this.level.tilemap.addTilesetImage('blocks','tiles');
-            this.level.tilemap.setCollisionBetween(10,14);
-            this.level.tilemap.setCollisionBetween(17,18);
-            //this.level.tilemap.setCollision(1);
-            this.level.layer = this.level.tilemap.createLayer('layer');
-            //this.level.layer.debug = true;
-            this.level.layer.resizeWorld();
-            this.game.physics.arcade.gravity.y = 1000;
             // =====
             
+            // =====
+            // LEVEL
+            this.game.config.level.tilemap = this.game.add.tilemap('level');
+            this.game.config.level.tilemap.addTilesetImage('blocks','tiles');
+            this.game.config.level.tilemap.setCollisionBetween(10,14);
+            this.game.config.level.tilemap.setCollisionBetween(17,18);
+            //this.level.tilemap.setCollision(1);
+            this.game.config.level.layer = this.game.config.level.tilemap.createLayer('layer');
+            //this.level.layer.debug = true;
+            this.game.config.level.layer.resizeWorld();
+            this.game.physics.arcade.gravity.y = 1000;
+            // =====
+
+            // =====
+            // COLLIDERS
+            this.game.config.groupColliders.players = this.game.add.group();
+            this.game.config.groupColliders.bullets = this.game.add.group();
+            // =====
+
             // =====
             // INSTANCE PLAYERS
             var playersConfig = {
                 p1: {
                     uiStatus: {x:10,y:10},
-                    character: 'drake',
+                    character: 'barts',
                     startPosition: {x:100,y:400}
                 },
                 p2: {
@@ -55,16 +79,16 @@ define([
                 },
                 p3: {
                     uiStatus: {x:10,y:660},
-                    character: 'drake',
+                    character: 'barts',
                     startPosition: {x:500,y:500}
                 },
                 p4: {
                     uiStatus:{x:1207,y:660},
-                    character: 'drake',
+                    character: 'barts',
                     startPosition: {x:900,y:600}
                 }
             }
-            for(var countPlayer = 1; countPlayer <= this.totalPlayers;countPlayer++){
+            for(var countPlayer = 1; countPlayer <= this.game.info.totalPlayers;countPlayer++){
                 //console.log('here');
                 var currentPlayer = playersConfig['p'+countPlayer];
                 var args = {
@@ -75,29 +99,38 @@ define([
                     },
                     character: currentPlayer.character
                 };
-                this.game.add.sprite(currentPlayer.uiStatus.x,currentPlayer.uiStatus.y, 'status');
-                this.players[countPlayer] = new Player(this.game,args);
-                this.players[countPlayer].start();
-                this.game.add.sprite(currentPlayer.uiStatus.x+8,currentPlayer.uiStatus.y+9, this.players[countPlayer]._default.avatar);
+                this.game.config.players[countPlayer] = new Player(this.game,args);
+                this.game.config.players[countPlayer].start();
             }
             //console.log(this.players);
+            // =====
+            
+            // =====
+            // UI
+            this.game.add.sprite(600,20, 'brawl');
+            for(var countPlayer = 1; countPlayer <= this.game.info.totalPlayers;countPlayer++){
+                currentPlayer = playersConfig['p'+countPlayer];
+                this.game.add.sprite(currentPlayer.uiStatus.x,currentPlayer.uiStatus.y, 'status');
+                this.game.add.sprite(currentPlayer.uiStatus.x+8,currentPlayer.uiStatus.y+9, this.game.config.players[countPlayer]._default.avatar);
+            }
             // =====
 
             // =====
             // GAMEPAD SUPPORT
             this.game.input.gamepad.start();
             // =====
-            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.game.scale.setShowAll();
             this.game.time.advancedTiming = true;
         },
         update: function(){
-            for(var countPlayer = 1; countPlayer <= this.totalPlayers;countPlayer++){
-                this.game.physics.arcade.collide(this.players[countPlayer].sprite, this.level.layer);
-                this.players[countPlayer].checkGamepad();
+            this.game.physics.arcade.collide(this.game.config.groupColliders.players, this.game.config.level.layer);
+            //this.game.physics.arcade.collide(this.game.config.groupColliders.players);
+            for(var countPlayer = 1; countPlayer <= this.game.info.totalPlayers;countPlayer++){
+                //this.game.physics.arcade.collide(this.players[countPlayer].sprite, this.level.layer);
+                this.game.config.players[countPlayer].checkGamepad();
             }
         },
         render: function(){
+            return;
             this.game.debug.text(this.game.time.fps, 2, 14, "#00ff00");
             this.game.debug.body(this.players[1].sprite);
         }

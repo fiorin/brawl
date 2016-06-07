@@ -37,7 +37,7 @@ define([
                 air: this._default.jump.y * -multSpeedAir
             },
             weapon: {
-                gun: (new Gun(this.game,this)).start(),
+                gun: (new Gun(game,this)).start(),
                 sword: null
             },
             can: {
@@ -50,6 +50,7 @@ define([
         };
         this.sprite = this.game.add.sprite(args.position.x, args.position.y, this._default.sprite);
         this.gamepad = this.game.input.gamepad['pad'+this.playerNumber];
+        this.game.config.groupColliders.players.add(this.sprite);
     }
     
     Player.prototype = {
@@ -60,7 +61,6 @@ define([
             this.sprite.anchor.setTo(0.5, 1);
                 // =====
                 // ANIMATIONS
-                console.log(Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3));
                 this.sprite.animations.add('still',Phaser.Animation.generateFrameNames('still/still__', 0, 9,'',3),6,false);
                 this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
                 this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
@@ -85,9 +85,8 @@ define([
                 this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
-                this.sprite.body.bounce.set(0.05); 
+                //this.sprite.body.bounce.set(0.05); 
                 this.sprite.body.setSize(this.sprite.body.width * .7, this.sprite.body.height, 0, 0);
-                console.log(this.sprite.body);
                 //this.sprite.body.gravity.y = this.game.physics.arcade.gravity.y;
                 // =====
 
@@ -221,7 +220,6 @@ define([
             this.sprite.body.velocity.x = 0;
         },
         run: function(multX){
-            console.log(this.sprite.body.facing);
             this.sprite.scale.x = this.current.position.face;
             this.sprite.body.velocity.x = this.current.speed.floor * multX;
             this.changeAnimation('run');
