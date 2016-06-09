@@ -6,13 +6,14 @@ define([
     Player
 ) { 
     'use strict';
+    var game;
 
     function GameState() {
-            
     }
     
     GameState.prototype = {
         preload: function() {
+            game = this.game;
             this.game.info = {
                 totalPlayers: 4
             }
@@ -30,8 +31,8 @@ define([
             };
         },
         create: function() {
-            console.log('qhat');
-            console.log(this);
+            //console.log('qhat');
+            //console.log(this);
             // =====
             // ENGINE
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -62,6 +63,13 @@ define([
             // COLLIDERS
             this.game.config.groupColliders.players = this.game.add.group();
             this.game.config.groupColliders.bullets = this.game.add.group();
+            var bullets = this.game.config.groupColliders.bullets;
+            bullets.enableBody = true;
+            bullets.physicsBodyType = Phaser.Physics.ARCADE;
+            bullets.createMultiple(20, 'bullet');
+            bullets.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', this.destroy);
+            bullets.callAll('anchor.setTo', 'anchor', .5, .5);
+            bullets.setAll('checkWorldBounds', true);
             // =====
 
             // =====
@@ -123,6 +131,10 @@ define([
         },
         update: function(){
             this.game.physics.arcade.collide(this.game.config.groupColliders.players, this.game.config.level.layer);
+           //this.game.physics.arcade.overlap(this.game.config.groupColliders.players);
+            this.game.physics.arcade.collide(this.game.config.groupColliders.bullets, this.game.config.level.layer, this.shootGround);
+            //this.game.physics.arcade.collide(this.game.config.groupColliders.bullets, this.game.config.groupColliders.players);
+            this.game.physics.arcade.collide(this.game.config.groupColliders.bullets, this.game.config.groupColliders.players, this.shootPlayer, null, this);
             //this.game.physics.arcade.collide(this.game.config.groupColliders.players);
             for(var countPlayer = 1; countPlayer <= this.game.info.totalPlayers;countPlayer++){
                 //this.game.physics.arcade.collide(this.players[countPlayer].sprite, this.level.layer);
@@ -130,9 +142,29 @@ define([
             }
         },
         render: function(){
-            return;
             this.game.debug.text(this.game.time.fps, 2, 14, "#00ff00");
-            this.game.debug.body(this.players[1].sprite);
+            this.game.debug.body(this.game.config.players[1].sprite);
+        },
+        destroy: function(object){
+            object.kill();
+        },
+        overlap: function(object){
+            //console.log(object);
+            console.log('objeto');
+        },
+        shootGround: function(bullet,ground){
+            console.log(ground);
+            console.log('vvvv');
+            game.add.sprite(ground.worldX,ground.worldY, 'blood');
+            bullet.kill();
+        },
+        shootPlayer: function(bullet,player){
+            if(bullet.body.touching.right && player.body.touching.left){
+                player._config.owner.bleed(-1);
+            }else if(bullet.body.touching.left && player.body.touching.right){
+                player._config.owner.bleed(1);
+            }
+            this.destroy(bullet);
         }
     };
     

@@ -18,8 +18,8 @@ define([
             //    this.game.scale.refresh();
             //}.bind(this));
            // this.game.scale.refresh();
-            console.log('scale');
-            console.log(this.game.scale);
+            //console.log('scale');
+            //console.log(this.game.scale);
             //this.game.stage.smoothed = false;
             this.game.state.start('Preload');
         }

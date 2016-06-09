@@ -19,6 +19,7 @@ define([
             this.game.load.image('avatar','assets/sprites/avatar.png');
             this.game.load.image('brawl','assets/brawl.png');
             this.game.load.image('bullet','assets/sprites/bullet.png');
+            this.game.load.image('blood','assets/sprites/blood.png');
         },
         create: function() {
             this.game.state.start('Game');

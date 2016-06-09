@@ -28,13 +28,6 @@ define([
         start: function() {
             this.setAmmo(this.config.ammo);
             this.setReady();
-            this.bullets = this.game.add.group();
-            this.bullets.enableBody = true;
-            this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
-            this.bullets.createMultiple(this.getAmmo(), 'bullet');
-            this.bullets.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', this.destroy);
-            this.bullets.callAll('anchor.setTo', 'anchor', .5, .5);
-            this.bullets.setAll('checkWorldBounds', true);
             return this;
         },
         // =====
@@ -57,15 +50,13 @@ define([
         // =====
         // ACTIONS
         shoot: function(){
-            var bullet = this.bullets.getFirstExists(false);
+            var bullet = this.game.config.groupColliders.bullets.getFirstExists(false);
             bullet.reset(this.owner.sprite.position.x, this.owner.sprite.position.y - (this.owner.sprite.body.height/2));
             bullet.body.gravity.y = -800;
+            bullet.body.immovable = true;
             bullet.body.velocity.x = this.owner.current.position.face * 1000;
             this.status.ammo--;
             this.setReady();
-        },
-        destroy: function(bullet){
-            bullet.kill();
         }
         // =====
     }

@@ -49,8 +49,11 @@ define([
             }
         };
         this.sprite = this.game.add.sprite(args.position.x, args.position.y, this._default.sprite);
+        this.sprite._config = {owner: this};
         this.gamepad = this.game.input.gamepad['pad'+this.playerNumber];
         this.game.config.groupColliders.players.add(this.sprite);
+        console.log('===');
+        console.log(this.game.config.groupColliders.players);
     }
     
     Player.prototype = {
@@ -85,6 +88,9 @@ define([
                 this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
+                this.sprite.body.friction = 0;
+                this.sprite.body.mass = 0;
+                //this.sprite.body.immovable = true;
                 //this.sprite.body.bounce.set(0.05); 
                 this.sprite.body.setSize(this.sprite.body.width * .7, this.sprite.body.height, 0, 0);
                 //this.sprite.body.gravity.y = this.game.physics.arcade.gravity.y;
@@ -238,7 +244,7 @@ define([
         },
         shoot: function(){
             if(this.current.weapon.gun.getReady() < this.game.time.time){
-                console.log('BANG');
+                //console.log('BANG');
                 this.current.weapon.gun.shoot();
                 if(this.sprite.body.blocked.down){
                     this.sprite.animations.play('shoot',false);
@@ -256,6 +262,11 @@ define([
                         this.fall();
                 }.bind(this));
             }
+        },
+        bleed: function(){
+            this.game.add.sprite(this.sprite.body.x,this.sprite.body.y, 'blood');
+            this.sprite.body.immovable = true;
+            this.sprite.damage(1);
         },
         /*
         block: function(){
