@@ -88,12 +88,11 @@ define([
                 this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
                 this.sprite.enableBody = true;
                 this.sprite.body.collideWorldBounds = true;
-                this.sprite.body.friction = 0;
-                this.sprite.body.mass = 0;
+                this.sprite.body.immovable = true;
                 //this.sprite.body.immovable = true;
                 //this.sprite.body.bounce.set(0.05); 
                 this.sprite.body.setSize(this.sprite.body.width * .7, this.sprite.body.height, 0, 0);
-                //this.sprite.body.gravity.y = this.game.physics.arcade.gravity.y;
+                this.sprite.body.gravity.y = 1000;
                 // =====
 
                 // =====
@@ -263,10 +262,13 @@ define([
                 }.bind(this));
             }
         },
-        bleed: function(){
-            this.game.add.sprite(this.sprite.body.x,this.sprite.body.y, 'blood');
-            this.sprite.body.immovable = true;
-            this.sprite.damage(1);
+        bleed: function(side){
+            var emitter = this.game.config.emitters.blood;
+            emitter.x = this.sprite.body.x + (this.sprite.width/2);
+            emitter.y = this.sprite.body.y + (this.sprite.height * .4);
+            //emitter.area = new Phaser.Rectangle(this.sprite.body.x, this.sprite.body.y, this.sprite.width, this.sprite.height)
+            emitter.start(true, 300, null, 5);
+            //this.sprite.damage(1);
         },
         /*
         block: function(){

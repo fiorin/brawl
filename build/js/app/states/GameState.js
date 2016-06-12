@@ -23,6 +23,9 @@ define([
                     players: [],
                     bullets: []
                 },
+                emitters: {
+                    blood: null
+                },
                 level: {
                     tilemap: null,
                     layer: null,
@@ -56,7 +59,7 @@ define([
             this.game.config.level.layer = this.game.config.level.tilemap.createLayer('layer');
             //this.level.layer.debug = true;
             this.game.config.level.layer.resizeWorld();
-            this.game.physics.arcade.gravity.y = 1000;
+            //this.game.physics.arcade.gravity.y = 1000;
             // =====
 
             // =====
@@ -70,6 +73,17 @@ define([
             bullets.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', this.destroy);
             bullets.callAll('anchor.setTo', 'anchor', .5, .5);
             bullets.setAll('checkWorldBounds', true);
+            // =====
+
+            // =====
+            // EMMITERS
+            this.game.config.emitters.blood = this.game.add.emitter(0, 0, 300);
+            var emitterBlood = this.game.config.emitters.blood;
+            emitterBlood.makeParticles('blood');
+            emitterBlood.minParticleSpeed.setTo(-100, -100);
+            emitterBlood.maxParticleSpeed.setTo( 100,  100);
+            emitterBlood.setScale(0.8, 1, 0.8, 1, 600, Phaser.Easing.Quintic.Out);
+            emitterBlood.gravity =200;
             // =====
 
             // =====
@@ -131,7 +145,7 @@ define([
         },
         update: function(){
             this.game.physics.arcade.collide(this.game.config.groupColliders.players, this.game.config.level.layer);
-           //this.game.physics.arcade.overlap(this.game.config.groupColliders.players);
+            this.game.physics.arcade.overlap(this.game.config.groupColliders.players);
             this.game.physics.arcade.collide(this.game.config.groupColliders.bullets, this.game.config.level.layer, this.shootGround);
             //this.game.physics.arcade.collide(this.game.config.groupColliders.bullets, this.game.config.groupColliders.players);
             this.game.physics.arcade.collide(this.game.config.groupColliders.bullets, this.game.config.groupColliders.players, this.shootPlayer, null, this);
@@ -143,7 +157,7 @@ define([
         },
         render: function(){
             this.game.debug.text(this.game.time.fps, 2, 14, "#00ff00");
-            this.game.debug.body(this.game.config.players[1].sprite);
+            //this.game.debug.body(this.game.config.players[1].sprite);
         },
         destroy: function(object){
             object.kill();
@@ -159,10 +173,11 @@ define([
             bullet.kill();
         },
         shootPlayer: function(bullet,player){
+            bullet.body.velocity.x = 0;
             if(bullet.body.touching.right && player.body.touching.left){
-                player._config.owner.bleed(-1);
+                player._config.owner.bleed(.2);
             }else if(bullet.body.touching.left && player.body.touching.right){
-                player._config.owner.bleed(1);
+                player._config.owner.bleed(.8);
             }
             this.destroy(bullet);
         }
