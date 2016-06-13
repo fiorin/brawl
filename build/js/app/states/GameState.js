@@ -15,7 +15,7 @@ define([
         preload: function() {
             game = this.game;
             this.game.info = {
-                totalPlayers: 4
+                totalPlayers: 2
             }
             this.game.config = {
                 players: [],
@@ -84,6 +84,13 @@ define([
             emitterBlood.maxParticleSpeed.setTo( 100,  100);
             emitterBlood.setScale(0.8, 1, 0.8, 1, 600, Phaser.Easing.Quintic.Out);
             emitterBlood.gravity =200;
+            this.game.config.emitters.dust = this.game.add.emitter(0, 0, 300);
+            var emitterDust = this.game.config.emitters.dust;
+            emitterDust.makeParticles('dust');
+            emitterDust.minParticleSpeed.setTo(-50, -50);
+            emitterDust.maxParticleSpeed.setTo( 50,  50);
+            emitterDust.setScale(0.5, 1, 0.5, 1, 600, Phaser.Easing.Quintic.Out);
+            emitterDust.gravity =-150;
             // =====
 
             // =====
@@ -97,7 +104,7 @@ define([
                 p2: {
                     uiStatus: {x:1207,y:10},
                     character: 'barts',
-                    startPosition: {x:300,y:200}
+                    startPosition: {x:900,y:200}
                 },
                 p3: {
                     uiStatus: {x:10,y:660},
@@ -107,7 +114,7 @@ define([
                 p4: {
                     uiStatus:{x:1207,y:660},
                     character: 'barts',
-                    startPosition: {x:900,y:600}
+                    startPosition: {x:1100,y:600}
                 }
             }
             for(var countPlayer = 1; countPlayer <= this.game.info.totalPlayers;countPlayer++){
@@ -169,7 +176,10 @@ define([
         shootGround: function(bullet,ground){
             console.log(ground);
             console.log('vvvv');
-            game.add.sprite(ground.worldX,ground.worldY, 'blood');
+            var emitter = bullet.config.owner.game.config.emitters.dust;
+            emitter.x = bullet.body.x + (bullet.width/2);
+            emitter.y = bullet.body.y + (bullet.height/2);
+            emitter.start(true, 250, null, 4);
             bullet.kill();
         },
         shootPlayer: function(bullet,player){

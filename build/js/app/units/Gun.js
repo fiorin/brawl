@@ -54,6 +54,7 @@ define([
             bullet.reset(this.owner.sprite.position.x, this.owner.sprite.position.y - (this.owner.sprite.body.height/2));
             bullet.body.gravity.y = 200;
             bullet.body.mass = 0;
+            bullet.config = {owner: this.owner};
             bullet.body.velocity.x = this.owner.current.position.face * 1000;
             this.status.ammo--;
             this.setReady();

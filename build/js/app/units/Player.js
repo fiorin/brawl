@@ -14,7 +14,6 @@ define([
         this._default = {
             weight: 80,
             speed: 250,
-            life: 100,
             jump: {
                 y: 600,
                 times: 2
@@ -26,7 +25,7 @@ define([
             position: {
                 face: args.face || 1
             },
-            life: null,
+            status: 'alive',
             speed: {
                 floor: this._default.speed * multSpeedFloor,
                 air: this._default.speed * multSpeedAir,
@@ -68,10 +67,11 @@ define([
                 this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
                 this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
                 this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
-                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
-                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
-                this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
-                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('die',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('hited',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
+                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
+                this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
+                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
                 //this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/', 1, 4,'',1),8,true,false);
                 //this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/', 1, 2,'',1),2,true,false);
                 //this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('fall/', 1, 2,'',1),2,true,false);
@@ -107,6 +107,8 @@ define([
         // CHECK GAMEPAD INPUT
         checkGamepad: function(){
             //console.log(this.sprite.body.blocked);
+            if(this.current.status === 'dead')
+                return;
             if(this.sprite.body.blocked.down){
             // =====
             // IF FLOOR
@@ -134,7 +136,7 @@ define([
                 if(this.current.can.jump){
                 // =====
                 // IF CAN JUMP
-                    if(this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
+                    if(this.playerNumber == 2 || this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
                     // =====
                     // JUMP
                         this.current.can.jump = false;
@@ -241,6 +243,14 @@ define([
         fall: function(){
             this.changeAnimation('fall');
         },
+        die: function(){
+            this.sprite.body.velocity.y = 0;
+            this.changeAnimation('hited');
+            this.sprite.animations.currentAnim.onComplete.add(function(){
+                this.changeAnimation('die');
+            }.bind(this));
+            this.current.status = 'dead';
+        },
         shoot: function(){
             if(this.current.weapon.gun.getReady() < this.game.time.time){
                 //console.log('BANG');
@@ -266,9 +276,8 @@ define([
             var emitter = this.game.config.emitters.blood;
             emitter.x = this.sprite.body.x + (this.sprite.width/2);
             emitter.y = this.sprite.body.y + (this.sprite.height * .4);
-            //emitter.area = new Phaser.Rectangle(this.sprite.body.x, this.sprite.body.y, this.sprite.width, this.sprite.height)
             emitter.start(true, 300, null, 5);
-            //this.sprite.damage(1);
+            this.die();
         },
         /*
         block: function(){
