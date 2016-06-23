@@ -12,6 +12,7 @@ define([
             //this.game.load.atlasJSONHash('player', 'assets/sprites/barts.png', 'assets/sprites/barts.json');
             this.game.load.atlasJSONHash('drake', 'assets/sprites/drake.png', 'assets/sprites/drake.json');
             this.game.load.atlasJSONHash('barts', 'assets/sprites/barts.png', 'assets/sprites/barts.json');
+            this.game.load.atlasJSONHash('bonny', 'assets/sprites/bonny.png', 'assets/sprites/bonny.json');
             this.game.load.tilemap('level','assets/levels/map.json',null,Phaser.Tilemap.TILED_JSON);
             this.game.load.image('tiles','assets/sprites/blocks.png');
             this.game.load.image('bg','assets/sprites/bg.jpg');

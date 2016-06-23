@@ -63,8 +63,8 @@ define([
             this.sprite.anchor.setTo(0.5, 1);
                 // =====
                 // ANIMATIONS
-                this.sprite.animations.add('still',Phaser.Animation.generateFrameNames('still/still__', 0, 9,'',3),6,false);
-                this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('still',Phaser.Animation.generateFrameNames('still/still__', 0, 6,'',3),6,false);
+                this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/run__', 0, 6,'',3),9,false);
                 this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
                 this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
                 this.sprite.animations.add('die',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
@@ -136,7 +136,7 @@ define([
                 if(this.current.can.jump){
                 // =====
                 // IF CAN JUMP
-                    if(this.playerNumber == 2 || this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
+                    if(this.playerNumber == 3 || this.gamepad.isDown(Phaser.Gamepad.XBOX360_A)){
                     // =====
                     // JUMP
                         this.current.can.jump = false;

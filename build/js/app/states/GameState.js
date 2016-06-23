@@ -15,7 +15,7 @@ define([
         preload: function() {
             game = this.game;
             this.game.info = {
-                totalPlayers: 2
+                totalPlayers: 3
             }
             this.game.config = {
                 players: [],
@@ -98,18 +98,18 @@ define([
             var playersConfig = {
                 p1: {
                     uiStatus: {x:10,y:10},
-                    character: 'barts',
+                    character: 'bonny',
                     startPosition: {x:100,y:400}
                 },
                 p2: {
                     uiStatus: {x:1207,y:10},
                     character: 'barts',
-                    startPosition: {x:900,y:200}
+                    startPosition: {x:500,y:200}
                 },
                 p3: {
-                    uiStatus: {x:10,y:660},
+                    uiStatus: {x:1207,y:10},
                     character: 'barts',
-                    startPosition: {x:500,y:500}
+                    startPosition: {x:900,y:500}
                 },
                 p4: {
                     uiStatus:{x:1207,y:660},
