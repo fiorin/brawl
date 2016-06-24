@@ -65,8 +65,8 @@ define([
                 // ANIMATIONS
                 this.sprite.animations.add('still',Phaser.Animation.generateFrameNames('still/still__', 0, 6,'',3),6,false);
                 this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/run__', 0, 6,'',3),9,false);
-                this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
-                this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/jump__', 0, 6,'',3),6,false);
+                this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('jump/jump__', 0, 6,'',3),6,false);
                 this.sprite.animations.add('die',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
                 this.sprite.animations.add('hited',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
                 this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);

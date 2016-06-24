@@ -15,7 +15,7 @@ define([
         preload: function() {
             game = this.game;
             this.game.info = {
-                totalPlayers: 3
+                totalPlayers: 1
             }
             this.game.config = {
                 players: [],
