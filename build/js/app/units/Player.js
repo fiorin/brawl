@@ -68,7 +68,7 @@ define([
                 this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/run__', 0, 6,'',3),9,false);
                 this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/jump__', 0, 6,'',3),9,false);
                 this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('fall/fall__', 0, 6,'',3),9,false);
-                this.sprite.animations.add('die',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
+                this.sprite.animations.add('die',Phaser.Animation.generateFrameNames('die/die__', 0, 6,'',3),9,false,false);
                 this.sprite.animations.add('hited',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
                 this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('shoot/shoot__', 0, 6,'',3),9,false,false);
                 this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
@@ -247,9 +247,10 @@ define([
         },
         die: function(){
             this.sprite.body.velocity.y = 0;
-            this.changeAnimation('hited');
+            this.changeAnimation('die');
             this.sprite.animations.currentAnim.onComplete.add(function(){
-                this.changeAnimation('die');
+                this.sprite.enableBody = false;
+                this.sprite.body = null;
             }.bind(this));
             this.current.status = 'dead';
         },
@@ -280,7 +281,8 @@ define([
             emitter.x = this.sprite.body.x + (this.sprite.width/2);
             emitter.y = this.sprite.body.y + (this.sprite.height * .4);
             emitter.start(true, 300, null, 5);
-            this.die();
+            if(this.current.status !== 'dead')
+                this.die();
         },
         /*
         block: function(){
