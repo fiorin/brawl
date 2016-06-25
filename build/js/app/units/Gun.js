@@ -51,7 +51,7 @@ define([
         // ACTIONS
         shoot: function(){
             var bullet = this.game.config.groupColliders.bullets.getFirstExists(false);
-            bullet.reset(this.owner.sprite.position.x, this.owner.sprite.position.y - (this.owner.sprite.body.height/2));
+            bullet.reset(this.owner.sprite.position.x + (this.owner.sprite.body.height*.1), this.owner.sprite.position.y - (this.owner.sprite.body.height*.45));
             bullet.body.gravity.y = 200;
             bullet.body.mass = 0;
             bullet.config = {owner: this.owner};

@@ -40,6 +40,7 @@ define([
                 sword: null
             },
             can: {
+                move: true,
                 die: true,
                 run: true,
                 shoot: true,
@@ -65,13 +66,13 @@ define([
                 // ANIMATIONS
                 this.sprite.animations.add('still',Phaser.Animation.generateFrameNames('still/still__', 0, 6,'',3),6,false);
                 this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/run__', 0, 6,'',3),9,false);
-                this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/jump__', 0, 6,'',3),6,false);
-                this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('jump/jump__', 0, 6,'',3),6,false);
+                this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/jump__', 0, 6,'',3),9,false);
+                this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('fall/fall__', 0, 6,'',3),9,false);
                 this.sprite.animations.add('die',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),4,false);
                 this.sprite.animations.add('hited',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
-                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
+                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('shoot/shoot__', 0, 6,'',3),9,false,false);
                 this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
-                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
+                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('shoot/shoot__', 0, 6,'',3),9,false,false);
                 //this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/', 1, 4,'',1),8,true,false);
                 //this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/', 1, 2,'',1),2,true,false);
                 //this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('fall/', 1, 2,'',1),2,true,false);
@@ -109,6 +110,7 @@ define([
             //console.log(this.sprite.body.blocked);
             if(this.current.status === 'dead')
                 return;
+            if(!this.current.can.move) return;
             if(this.sprite.body.blocked.down){
             // =====
             // IF FLOOR
@@ -253,7 +255,7 @@ define([
         },
         shoot: function(){
             if(this.current.weapon.gun.getReady() < this.game.time.time){
-                //console.log('BANG');
+                this.current.can.move = false;
                 this.current.weapon.gun.shoot();
                 if(this.sprite.body.blocked.down){
                     this.sprite.animations.play('shoot',false);
@@ -265,6 +267,7 @@ define([
                         this.sprite.body.velocity.y = 0
                 }
                 this.sprite.animations.currentAnim.onComplete.add(function(){
+                    this.current.can.move = true;
                     if(this.sprite.body.blocked.down)
                         this.still();
                     else
