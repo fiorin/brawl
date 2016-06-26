@@ -4,7 +4,7 @@ define([
 
 ) { 
     var multSpeedFloor = 1,
-        multSpeedAir   = 1
+        multSpeedAir   = 1;
     function Gun(game,owner,args){
         this.game = game;
         this.owner = owner;
@@ -21,7 +21,6 @@ define([
             ammo: null,
             whenReady: null
         };
-        this.bullets;
     }
     
     Gun.prototype = {
@@ -50,8 +49,12 @@ define([
         // =====
         // ACTIONS
         shoot: function(){
+            var emitter = this.game.config.emitters.smoke.emitter;
+            emitter.x = this.owner.sprite.position.x + (this.owner.sprite.body.height*0.3);
+            emitter.y = this.owner.sprite.position.y - (this.owner.sprite.body.height*0.45);
+            emitter.start(true, 200, null, 5);
             var bullet = this.game.config.groupColliders.bullets.getFirstExists(false);
-            bullet.reset(this.owner.sprite.position.x + (this.owner.sprite.body.height*.1), this.owner.sprite.position.y - (this.owner.sprite.body.height*.45));
+            bullet.reset(this.owner.sprite.position.x + (this.owner.sprite.body.height*0.1),this.owner.sprite.position.y - (this.owner.sprite.body.height*0.45));
             bullet.body.gravity.y = 200;
             bullet.body.mass = 0;
             bullet.config = {owner: this.owner};
@@ -60,7 +63,7 @@ define([
             this.setReady();
         }
         // =====
-    }
+    };
     
     return Gun;
 });

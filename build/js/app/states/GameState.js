@@ -16,7 +16,7 @@ define([
             game = this.game;
             this.game.info = {
                 totalPlayers: 2
-            }
+            };
             this.game.config = {
                 players: [],
                 groupColliders: {
@@ -24,7 +24,18 @@ define([
                     bullets: []
                 },
                 emitters: {
-                    blood: null
+                    blood: {
+                        frames: [0,1,2,3],
+                        emitter: null
+                    },
+                    dust: {
+                        frames: [4,5,6,7],
+                        emitter: null
+                    },
+                    smoke: {
+                        frames: [8,9,10,11],
+                        emitter: null
+                    }
                 },
                 level: {
                     tilemap: null,
@@ -71,26 +82,33 @@ define([
             bullets.physicsBodyType = Phaser.Physics.ARCADE;
             bullets.createMultiple(20, 'bullet');
             bullets.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', this.destroy);
-            bullets.callAll('anchor.setTo', 'anchor', .5, .5);
+            bullets.callAll('anchor.setTo', 'anchor', 0.5, 0.5);
             bullets.setAll('checkWorldBounds', true);
             // =====
 
             // =====
             // EMMITERS
-            this.game.config.emitters.blood = this.game.add.emitter(0, 0, 300);
-            var emitterBlood = this.game.config.emitters.blood;
-            emitterBlood.makeParticles('blood');
+            this.game.config.emitters.blood.emitter = this.game.add.emitter(0, 0, 300);
+            var emitterBlood = this.game.config.emitters.blood.emitter;
+            emitterBlood.makeParticles('particles', this.game.config.emitters.blood.frames);
             emitterBlood.minParticleSpeed.setTo(-100, -100);
             emitterBlood.maxParticleSpeed.setTo( 100,  100);
             emitterBlood.setScale(0.8, 1, 0.8, 1, 600, Phaser.Easing.Quintic.Out);
             emitterBlood.gravity =200;
-            this.game.config.emitters.dust = this.game.add.emitter(0, 0, 300);
-            var emitterDust = this.game.config.emitters.dust;
-            emitterDust.makeParticles('dust');
+            this.game.config.emitters.dust.emitter = this.game.add.emitter(0, 0, 300);
+            var emitterDust = this.game.config.emitters.dust.emitter;
+            emitterDust.makeParticles('particles', this.game.config.emitters.dust.frames);
             emitterDust.minParticleSpeed.setTo(-50, -50);
             emitterDust.maxParticleSpeed.setTo( 50,  50);
             emitterDust.setScale(0.5, 1, 0.5, 1, 600, Phaser.Easing.Quintic.Out);
             emitterDust.gravity =-150;
+            this.game.config.emitters.smoke.emitter = this.game.add.emitter(0, 0, 300);
+            var emitterSmoke = this.game.config.emitters.smoke.emitter;
+            emitterSmoke.makeParticles('particles', this.game.config.emitters.smoke.frames);
+            emitterSmoke.minParticleSpeed.setTo(-30, -30);
+            emitterSmoke.maxParticleSpeed.setTo( 30,  30);
+            emitterSmoke.setScale(0.5, 1, 0.5, 1, 600, Phaser.Easing.Quintic.Out);
+            emitterSmoke.gravity =-50;
             // =====
 
             // =====
@@ -116,7 +134,7 @@ define([
                     character: 'barts',
                     startPosition: {x:1100,y:600}
                 }
-            }
+            };
             for(var countPlayer = 1; countPlayer <= this.game.info.totalPlayers;countPlayer++){
                 //console.log('here');
                 var currentPlayer = playersConfig['p'+countPlayer];
@@ -130,19 +148,15 @@ define([
                 };
                 this.game.config.players[countPlayer] = new Player(this.game,args);
                 this.game.config.players[countPlayer].start();
+                // =====
+                // UI
+                currentPlayer = playersConfig['p'+countPlayer];
+                this.game.add.sprite(currentPlayer.uiStatus.x+8,currentPlayer.uiStatus.y+9, this.game.config.players[countPlayer]._default.avatar);
+                this.game.add.sprite(currentPlayer.uiStatus.x,currentPlayer.uiStatus.y, 'status');
+                // =====
             }
-            //console.log(this.players);
             // =====
             
-            // =====
-            // UI
-            this.game.add.sprite(600,20, 'brawl');
-            for(var countPlayer = 1; countPlayer <= this.game.info.totalPlayers;countPlayer++){
-                currentPlayer = playersConfig['p'+countPlayer];
-                this.game.add.sprite(currentPlayer.uiStatus.x,currentPlayer.uiStatus.y, 'status');
-                this.game.add.sprite(currentPlayer.uiStatus.x+8,currentPlayer.uiStatus.y+9, this.game.config.players[countPlayer]._default.avatar);
-            }
-            // =====
 
             // =====
             // GAMEPAD SUPPORT
@@ -163,7 +177,7 @@ define([
             }
         },
         render: function(){
-            //this.game.debug.text(this.game.time.fps, 2, 14, "#00ff00");
+            this.game.debug.text(this.game.time.fps, 2, 14, "#00ff00");
             //this.game.debug.body(this.game.config.players[1].sprite);
         },
         destroy: function(object){
@@ -176,18 +190,18 @@ define([
         shootGround: function(bullet,ground){
             console.log(ground);
             console.log('vvvv');
-            var emitter = bullet.config.owner.game.config.emitters.dust;
+            var emitter = bullet.config.owner.game.config.emitters.dust.emitter;
             emitter.x = bullet.body.x + (bullet.width/2);
             emitter.y = bullet.body.y + (bullet.height/2);
-            emitter.start(true, 250, null, 4);
+            emitter.start(true, 250, null,5);
             bullet.kill();
         },
         shootPlayer: function(bullet,player){
             bullet.body.velocity.x = 0;
             if(bullet.body.touching.right && player.body.touching.left){
-                player._config.owner.bleed(.2);
+                player._config.owner.bleed(0.2);
             }else if(bullet.body.touching.left && player.body.touching.right){
-                player._config.owner.bleed(.8);
+                player._config.owner.bleed(0.8);
             }
             this.destroy(bullet);
         }

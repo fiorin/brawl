@@ -18,10 +18,8 @@ define([
             this.game.load.image('bg','assets/sprites/bg.jpg');
             this.game.load.image('status','assets/sprites/status.png');
             this.game.load.image('avatar','assets/sprites/avatar.png');
-            this.game.load.image('brawl','assets/brawl.png');
             this.game.load.image('bullet','assets/sprites/bullet.png');
-            this.game.load.image('blood','assets/sprites/blood.png');
-            this.game.load.image('dust','assets/sprites/dust.png');
+            this.game.load.spritesheet('particles','assets/sprites/particles.png',32,32);
         },
         create: function() {
             this.game.state.start('Game');

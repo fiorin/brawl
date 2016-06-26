@@ -5,7 +5,7 @@ define([
 ) { 
     'use strict';
     var multSpeedFloor = 1,
-        multSpeedAir   = .8,
+        multSpeedAir   = 0.8,
         multSpeedWall  = 1.5,
         zero           = 0;
     function Player(game,args){
@@ -70,18 +70,9 @@ define([
                 this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('fall/fall__', 0, 6,'',3),9,false);
                 this.sprite.animations.add('die',Phaser.Animation.generateFrameNames('die/die__', 0, 6,'',3),9,false,false);
                 this.sprite.animations.add('hited',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
-                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('shoot/shoot__', 0, 6,'',3),9,false,false);
+                this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('jump_shoot/jump_shoot__', 0, 6,'',3),9,false,false);
                 this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('still/still__', 0, 4,'',3),false,false);
-                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('shoot/shoot__', 0, 6,'',3),9,false,false);
-                //this.sprite.animations.add('run',Phaser.Animation.generateFrameNames('run/', 1, 4,'',1),8,true,false);
-                //this.sprite.animations.add('jump',Phaser.Animation.generateFrameNames('jump/', 1, 2,'',1),2,true,false);
-                //this.sprite.animations.add('fall',Phaser.Animation.generateFrameNames('fall/', 1, 2,'',1),2,true,false);
-                //this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('shoot/', 1, 2,'',1),4,false,false);
-                //this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('jump_shoot/', 1, 2,'',1),4,false,false);
-                //this.sprite.animations.add('jump_shoot',Phaser.Animation.generateFrameNames('shoot/', 1, 2,'',1),4,false,false);
-                //this.sprite.animations.add('block',Phaser.Animation.generateFrameNames('block/', 1, 1,'',1),4,false,false);
-                //this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('jump_block/', 1, 2,'',1),2,true,false);
-                //this.sprite.animations.add('jump_block',Phaser.Animation.generateFrameNames('block/', 1, 2,'',1),4,true,false);
+                this.sprite.animations.add('shoot',Phaser.Animation.generateFrameNames('shoot/shoot__', 0, 6,'',3),9,false,false);                
                 // =====
 
                 // =====
@@ -92,7 +83,7 @@ define([
                 this.sprite.body.immovable = true;
                 //this.sprite.body.immovable = true;
                 //this.sprite.body.bounce.set(0.05); 
-                this.sprite.body.setSize(this.sprite.body.width * .7, this.sprite.body.height, 0, 0);
+                this.sprite.body.setSize(this.sprite.body.width * 0.7, this.sprite.body.height, 0, 0);
                 this.sprite.body.gravity.y = 1000;
                 // =====
 
@@ -159,8 +150,7 @@ define([
             }else{
             // =====
             // IF AIR
-                if(!(this.sprite.body.deltaX() > 0)
-                && (this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < 0)){
+                if((this.sprite.body.deltaX() <= 0) && (this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < 0)){
                 // =====
                 // GO TO LEFT
                     this.changeFacing(-1);
@@ -171,8 +161,7 @@ define([
                         this.runJump(this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X));
                     }
                 // =====
-                }else if(!(this.sprite.body.deltaX() < 0)
-                && (this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0)){
+                }else if((this.sprite.body.deltaX() >= 0) && (this.gamepad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0)){
                 // =====
                 // GO TO RIGHT
                     this.changeFacing(1);
@@ -265,7 +254,7 @@ define([
                     this.sprite.animations.play('jump_shoot',false);
                     this.sprite.body.velocity.x = -this.current.weapon.gun.config.recoil * this.current.position.face;
                     if(this.sprite.body.velocity.y < 0)
-                        this.sprite.body.velocity.y = 0
+                        this.sprite.body.velocity.y = 0;
                 }
                 this.sprite.animations.currentAnim.onComplete.add(function(){
                     this.current.can.move = true;
@@ -277,9 +266,9 @@ define([
             }
         },
         bleed: function(side){
-            var emitter = this.game.config.emitters.blood;
+            var emitter = this.game.config.emitters.blood.emitter;
             emitter.x = this.sprite.body.x + (this.sprite.width/2);
-            emitter.y = this.sprite.body.y + (this.sprite.height * .4);
+            emitter.y = this.sprite.body.y + (this.sprite.height * 0.4);
             emitter.start(true, 300, null, 5);
             if(this.current.status !== 'dead')
                 this.die();
