@@ -2,11 +2,13 @@ define([
     'phaser',
     'app/states/BootState',
     'app/states/PreloadState',
+    'app/states/CharacterState',
     'app/states/GameState'
 ], function (
     Phaser,
     BootState,
     PreloadState,
+    CharacterState,
     GameState
 ) { 
     'use strict';
@@ -20,6 +22,7 @@ define([
             var game = new Phaser.Game(1280, 720, Phaser.AUTO, '', null, false, false);
             game.state.add('Boot', BootState);
             game.state.add('Preload', PreloadState);
+            game.state.add('CharacterState', CharacterState);
             game.state.add('Game', GameState);
             game.state.start('Boot');
         }

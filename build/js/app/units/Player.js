@@ -52,8 +52,6 @@ define([
         this.sprite._config = {owner: this};
         this.gamepad = this.game.input.gamepad['pad'+this.playerNumber];
         this.game.config.groupColliders.players.add(this.sprite);
-        console.log('===');
-        console.log(this.game.config.groupColliders.players);
     }
     
     Player.prototype = {

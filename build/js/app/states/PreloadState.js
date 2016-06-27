@@ -17,12 +17,14 @@ define([
             this.game.load.image('tiles','assets/sprites/blocks.png');
             this.game.load.image('bg','assets/sprites/bg.jpg');
             this.game.load.image('status','assets/sprites/status.png');
-            this.game.load.image('avatar','assets/sprites/avatar.png');
             this.game.load.image('bullet','assets/sprites/bullet.png');
             this.game.load.spritesheet('particles','assets/sprites/particles.png',32,32);
+            this.game.load.spritesheet('controller','assets/sprites/controller.png',64,64);
+            this.game.load.image('avatar','assets/sprites/bonny-avatar.png');
+            this.game.load.image('selector','assets/sprites/selector.png');
         },
         create: function() {
-            this.game.state.start('Game');
+            this.game.state.start('CharacterState');
         }
     };
     

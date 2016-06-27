@@ -188,8 +188,6 @@ define([
             console.log('objeto');
         },
         shootGround: function(bullet,ground){
-            console.log(ground);
-            console.log('vvvv');
             var emitter = bullet.config.owner.game.config.emitters.dust.emitter;
             emitter.x = bullet.body.x + (bullet.width/2);
             emitter.y = bullet.body.y + (bullet.height/2);
