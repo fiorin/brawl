@@ -14,8 +14,9 @@ define([
     GameState.prototype = {
         preload: function() {
             game = this.game;
+            console.log(game.options);
             this.game.info = {
-                totalPlayers: 2
+                totalPlayers: 0
             };
             this.game.config = {
                 players: [],
@@ -113,6 +114,11 @@ define([
 
             // =====
             // INSTANCE PLAYERS
+            for(var count = 1;count <= 4;count++){
+                if(this.game.options.players['p'+count].current.status){
+                    this.game.info.totalPlayers++;
+                }
+            }
             var playersConfig = {
                 p1: {
                     uiStatus: {x:10,y:10},
@@ -150,9 +156,9 @@ define([
                 this.game.config.players[countPlayer].start();
                 // =====
                 // UI
-                currentPlayer = playersConfig['p'+countPlayer];
-                this.game.add.sprite(currentPlayer.uiStatus.x+8,currentPlayer.uiStatus.y+9, this.game.config.players[countPlayer]._default.avatar);
-                this.game.add.sprite(currentPlayer.uiStatus.x,currentPlayer.uiStatus.y, 'status');
+                //currentPlayer = playersConfig['p'+countPlayer];
+                //this.game.add.sprite(currentPlayer.uiStatus.x+8,currentPlayer.uiStatus.y+9, this.game.config.players[countPlayer]._default.avatar);
+                //this.game.add.sprite(currentPlayer.uiStatus.x,currentPlayer.uiStatus.y, 'status');
                 // =====
             }
             // =====

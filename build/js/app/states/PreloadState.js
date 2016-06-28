@@ -20,8 +20,8 @@ define([
             this.game.load.image('bullet','assets/sprites/bullet.png');
             this.game.load.spritesheet('particles','assets/sprites/particles.png',32,32);
             this.game.load.spritesheet('controller','assets/sprites/controller.png',64,64);
-            this.game.load.image('avatar','assets/sprites/bonny-avatar.png');
-            this.game.load.image('selector','assets/sprites/selector.png');
+            this.game.load.spritesheet('avatar','assets/sprites/avatars.png',64,64);
+            this.game.load.spritesheet('selector','assets/sprites/selectors.png',80,80);
         },
         create: function() {
             this.game.state.start('CharacterState');
